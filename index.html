@@ -32,7 +32,6 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/fireba
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, updateProfile } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
 
 import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
-
 const firebaseConfig = {
   apiKey: "AIzaSyCapfPfADVS9SEmZkemhjzAiTWHwn6Y9zU",
   authDomain: "shopnova-b9ff8.firebaseapp.com",
@@ -46,6 +45,40 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 let cart=[];
+async function loadProducts() {
+  const container = document.querySelector('.products');
+
+  try {
+    const snapshot = await getDocs(collection(db, 'products'));
+
+    if (snapshot.empty) {
+      container.innerHTML = '<p>এখনো কোনো পণ্য যোগ করা হয়নি।</p>';
+      return;
+    }
+
+    container.innerHTML = '';
+
+    snapshot.forEach((doc) => {
+      const product = doc.data();
+      const card = document.createElement('article');
+      card.className = 'product';
+
+      const title = document.createElement('h3');
+      title.textContent = product.name || 'পণ্য';
+
+      const price = document.createElement('p');
+      price.className = 'price';
+      price.textContent = '৳ ' + (product.price ?? 0);
+
+      card.append(title, price);
+      container.appendChild(card);
+    });
+  } catch (error) {
+    console.error('পণ্য লোড হয়নি:', error);
+  }
+}
+
+loadProducts();
 window.showPage=function(id){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));const page=document.getElementById(id);if(page)page.classList.add('active');window.scrollTo({top:0,behavior:'smooth'});if(id==='cart')renderCart()};
 window.addCart=function(name){cart.push(name);document.getElementById('cartCount').textContent=cart.length;document.getElementById('cartMessage').textContent=name+' কার্টে যোগ হয়েছে।'};
 function renderCart(){const box=document.getElementById('cartItems');if(!cart.length){box.className='empty';box.textContent='এখনো কার্টে কোনো পণ্য যোগ করোনি।';return}box.className='empty';box.replaceChildren();cart.forEach((x,i)=>{const row=document.createElement('p');row.textContent=(i+1)+'. '+x;box.appendChild(row)});const clear=document.createElement('button');clear.className='btn btn-light';clear.textContent='কার্ট খালি করো';clear.onclick=()=>{cart=[];document.getElementById('cartCount').textContent=0;renderCart()};box.appendChild(clear)}
