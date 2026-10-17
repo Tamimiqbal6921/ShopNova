@@ -31,6 +31,8 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, updateProfile } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
 
+import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+
 const firebaseConfig = {
   apiKey: "AIzaSyCapfPfADVS9SEmZkemhjzAiTWHwn6Y9zU",
   authDomain: "shopnova-b9ff8.firebaseapp.com",
